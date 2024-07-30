@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <!-- Document title and metadata -->
+    <title>ATP Tennis Data</title>
+    <meta charset="utf-8">
+    <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+    <!-- Navigation bar for easy access to different sections of the website -->
+    <nav>
+        <h1>ATP Tennis Data</h1>
+        <a href="./index.html">Data on a Player</a>
+        <a href="./tournamentData.html">Explore a Tournament</a>
+        <a href="./aggregatedStats.html">Aggregated Player Statistics</a>
+    </nav>
+    <!-- Main content section for exploring tournaments in a specific year -->
+    <h1>Explore a Tournament in a year</h1>
+
+    <!-- Form to input the tournament year -->
+    <label class="input-label" for="tourneyYear">Insert year here:</label>
+    <br>
+    <input type="text" id="tourneyYear" name="tourneyYear" required pattern="[0-9]{4}"><br><br>
+
+    <!-- Container for buttons, result table, and sorting buttons -->
+    <div class="center">
+        <!-- Buttons to trigger fetching tournament data, and sorting -->
+        <div class="button-wrapper">
+            <button onclick="fetchData()">See Result</button>
+            <button onclick="sortTable(0)">Sort by Tournament ID</button>
+            <button onclick="sortTable(1)">Sort by Name</button>
+            <button onclick="sortTable(2)">Sort by Surface</button>
+            <button onclick="sortTable(3)">Sort by Level</button>
+            <button onclick="sortTable(4)">Sort by Draw Size</button>
+        </div>
+
+        <!-- Table to display tournament data -->
+        <table class="result-table" id="table">
+            <tr>
+                <th>Tournament ID</th>
+                <th>Name</th>
+                <th>Surface</th>
+                <th>Level</th>
+                <th>Draw Size</th>
+            </tr>
+        </table>
+    </div>
+</body>
+
+<script>
+    // Function to asynchronously fetch tournament data from the server
+    function fetchData() {
+        const tourneyYear = document.getElementById("tourneyYear").value;
+        const dateURL = new URLSearchParams({ date: tourneyYear });
+        const URLstring = "/tourney?" + dateURL;
+
+        const responsePromise = fetch(URLstring, {
+            method: "GET",
+            headers: {
+                "Content-type": "application/json; charset=UTF-8"
+            }
+        });
+
+        responsePromise.then(
+            // Fulfilled
+            async (response) => {
+                populateTable(await response.json());
+            },
+            // Error
+            (error) => {
+                alert("Cannot obtain tournaments");
+            }
+        );
+    }
+
+    // Function to populate the table with tournament data
+    function populateTable(results) {
+        const table = document.getElementById("table");
+        results.forEach(element => {
+            const tourney = table.insertRow(-1);
+            const tourney_id = tourney.insertCell(0);
+            const name = tourney.insertCell(1);
+            const surface = tourney.insertCell(2);
+            const level = tourney.insertCell(3);
+            const draw_size = tourney.insertCell(4);
+
+            // Fill in the table cells with tournament data
+            tourney_id.innerText = element.tourney_id;
+            name.innerText = element.tourney_name;
+            surface.innerText = element.surface;
+            level.innerText = element.tourney_level;
+            draw_size.innerText = element.draw_size;
+        });
+    }
+
+    // Function to sort the table based on the selected column
+    function sortTable(n) {
+        var table, rows, switching, i, x, y, shouldSwitch, dir, switchcount = 0;
+        table = document.getElementById("table");
+        switching = true;
+        dir = "asc";
+        while (switching) {
+            switching = false;
+            rows = table.rows;
+            for (i = 1; i < (rows.length - 1); i++) {
+                shouldSwitch = false;
+                x = rows[i].getElementsByTagName("TD")[n];
+                y = rows[i + 1].getElementsByTagName("TD")[n];
+                if (dir == "asc") {
+                    if (x.innerHTML.toLowerCase() > y.innerHTML.toLowerCase()) {
+                        shouldSwitch = true;
+                        break;
+                    }
+                } else if (dir == "desc") {
+                    if (x.innerHTML.toLowerCase() < y.innerHTML.toLowerCase()) {
+                        shouldSwitch = true;
+                        break;
+                    }
+                }
+            }
+            if (shouldSwitch) {
+                rows[i].parentNode.insertBefore(rows[i + 1], rows[i]);
+                switching = true;
+                switchcount++;
+            } else {
+                if (switchcount == 0 && dir == "asc") {
+                    dir = "desc";
+                    switching = true;
+                }
+            }
+        }
+    }
+</script>
+
+</html>

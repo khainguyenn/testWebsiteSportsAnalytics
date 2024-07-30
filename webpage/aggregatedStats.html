@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <!-- Document title and metadata -->
+    <title>ATP Tennis Data</title>
+    <meta charset="utf-8">
+    <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+    <!-- Navigation bar for easy access to different sections of the website -->
+    <nav>
+        <h1>ATP Tennis Data</h1>
+        <a href="./index.html">Data on a Player</a>
+        <a href="./tournamentData.html">Explore a Tournament</a>
+        <a href="./aggregatedStats.html">Aggregated Player Statistics</a>
+    </nav>
+    <!-- Main content section for aggregated player statistics -->
+    <h1>Aggregated Player Statistics</h1>
+
+    <!-- Form to input player name, start date, and end date -->
+    <label class="input-label" for="playerName">Player Name:</label>
+    <br>
+    <input type="text" id="playerName" name="playerName" required>
+    <br>
+    <label class="input-label" for="startDate">Start Date:</label>
+    <br>
+    <input type="text" id="startDate" name="startDate" required><br>
+    <label class="input-label" for="endDate">End Date:</label>
+    <br>
+    <input type="text" id="endDate" name="endDate" required><br><br>
+
+    <!-- Container for buttons, result table, and sorting buttons -->
+    <div class="center">
+        <!-- Button to trigger fetching player statistics -->
+        <div class="button-wrapper">
+            <button onclick="fetchData()"> See results</button>
+        </div>
+
+        <!-- Table to display aggregated player statistics -->
+        <table class="result-table" id="table">
+            <tr>
+                <th>Player</th>
+                <th>Start Date</th>
+                <th>End Date</th>
+                <th>Matches Played</th>
+                <th>Matches Won</th>
+                <th>Matches Lost</th>
+                <th>Total Aces</th>
+                <th>Avg. Aces per Match</th>
+                <th>Total Double Faults</th>
+                <th>Avg. Double Faults per Match</th>
+                <th>Total Break Points Saved</th>
+                <th>Avg. Break Points Saved per Match</th>
+            </tr>
+        </table>
+    </div>
+
+    <!-- JavaScript section for fetching data and populating the table -->
+    <script>
+        // Function to fetch player statistics from the server
+        function fetchData() {
+            let playerName = document.getElementById("playerName").value;
+            let startDate = document.getElementById("startDate").value;
+            let endDate = document.getElementById("endDate").value;
+
+            let url = new URLSearchParams({ player: playerName, start: startDate, end: endDate });
+            let urlString = "/playerStats?" + url;
+
+            const responsePromise = fetch(urlString, {
+                method: "GET",
+                headers: {
+                    "Content-type": "application/json; charset=UTF-8"
+                }
+            });
+
+            responsePromise.then(
+                // Fulfilled
+                async (response) => {
+                    populateTable(playerName, startDate, endDate, await response.json())
+                },
+                // Error
+                (error) => {
+                    alert("Cannot obtain statistics")
+                })
+        }
+
+        // Function to populate the table with player statistics
+        function populateTable(playerName, start, end, results) {
+            let table = document.getElementById("table");
+            let row = 0;
+
+            results.forEach(element => {
+                if (row == 0) {
+                    // Insert a new row for player statistics
+                    let stats = table.insertRow(-1);
+                    // Insert cells for each data point
+                    let name = stats.insertCell(0);
+                    let startDate = stats.insertCell(1);
+                    let endDate = stats.insertCell(2);
+                    let matchesPlayed = stats.insertCell(3);
+                    let matchesWon = stats.insertCell(4);
+                    let matchesLost = stats.insertCell(5);
+                    let totalAces = stats.insertCell(6);
+                    let avgAcesPerMatch = stats.insertCell(7);
+                    let totalDoubleFaults = stats.insertCell(8);
+                    let avgDoubleFaultsPerMatch = stats.insertCell(9);
+                    let totalBreakPointsSaved = stats.insertCell(10);
+                    let avgBreakPointsSavedPerMatch = stats.insertCell(11);
+
+                    // Try to populate cells with data, log errors if any
+                    try {
+                        name.textContent = playerName;
+                        startDate.textContent = start;
+                        endDate.textContent = end;
+                        matchesPlayed.textContent = element.matches_played;
+                        matchesWon.textContent = element.matches_won;
+                        matchesLost.textContent = element.matches_lost;
+                        totalAces.textContent = element.total_aces;
+                        avgAcesPerMatch.textContent = element.avg_aces_per_match;
+                        totalDoubleFaults.textContent = element.total_double_faults;
+                        avgDoubleFaultsPerMatch.textContent = element.avg_double_faults_per_match;
+                        totalBreakPointsSaved.textContent = element.total_break_points_saved;
+                        avgBreakPointsSavedPerMatch.textContent = element.avg_break_points_saved_per_match;
+                    } catch (e) {
+                        console.log(e);
+                    }
+
+                    row++;
+                }
+            });
+        }
+    </script>
+
+</body>
+
+</html>

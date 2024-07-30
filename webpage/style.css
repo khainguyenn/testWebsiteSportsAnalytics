@@ -1,0 +1,74 @@
+/* Apply styling to the entire page */
+body {
+    font-family: Arial, sans-serif;
+    margin: 0;
+    padding: 0;
+    background-color: #f4f4f4;
+}
+
+/* Style the navigation bar */
+nav {
+    background-color: #333;
+    color: #fff;
+    padding: 10px;
+    text-align: center;
+}
+
+nav a {
+    color: #fff;
+    margin: 0 10px;
+    text-decoration: none;
+}
+
+/* Style the main content section */
+h1 {
+    text-align: center;
+    margin-top: 20px;
+}
+
+/* Style the form input and label */
+.input-label {
+    display: block;
+    margin: 10px 0;
+}
+
+input[type="text"] {
+    padding: 5px;
+}
+
+/* Center the buttons and result table */
+.center {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin-top: 20px;
+}
+
+/* Style the button */
+.button-wrapper {
+    margin-bottom: 10px;
+}
+
+button {
+    padding: 10px;
+    font-size: 16px;
+    cursor: pointer;
+}
+
+/* Style the result table */
+.result-table {
+    width: 80%;
+    border-collapse: collapse;
+    margin-top: 20px;
+}
+
+.result-table th, .result-table td {
+    border: 1px solid #ddd;
+    padding: 10px;
+    text-align: center;
+}
+
+/* Alternate row background color for better readability */
+.result-table tr:nth-child(even) {
+    background-color: #f9f9f9;
+}

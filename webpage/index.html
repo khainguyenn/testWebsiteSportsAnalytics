@@ -1,0 +1,96 @@
+<!-- ATP Tennis Data
+Author: Khai Nguyen -->
+
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+	<title>ATP Tennis Data</title>
+	<meta charset="utf-8">
+	<link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+	<!-- Navigation bar for easy access to different sections of the website -->
+	<nav>
+		<h1>ATP Tennis Data</h1>
+		<a href="./index.html">Data on a Player</a>
+		<a href="./tournamentData.html">Explore a Tournament</a>
+		<a href="./aggregatedStats.html">Aggregated Player Statistics</a>
+	</nav>
+	<!-- Main content section for player data -->
+	<h1>Data on a player</h1>
+
+	<!-- Form to input the player's name -->
+	<label class="input-label" for="fname">Insert name here:</label>
+	<br>
+	<input type="text" id="fname" name="fname" required><br><br>
+
+	<!-- Container for buttons and result table -->
+	<div class="center">
+		<!-- Button to trigger fetching and displaying player data -->
+		<div class="button-wrapper">
+			<button onclick="fetchData()"> Get result </button>
+		</div>
+
+		<!-- Table to display player data -->
+		<table class="result-table" id="table">
+			<tr>
+				<th>ID</th>
+				<th>Name</th>
+				<th>Hand</th>
+				<th>Height</th>
+				<th>IOC</th>
+			</tr>
+		</table>
+	</div>
+
+	<script>
+		// Function to asynchronously fetch player data from the server
+		async function fetchData() {
+			try {
+				// Get player name from the input field
+				const playerName = document.getElementById("fname").value;
+				const playerNameURL = new URLSearchParams({ player_name: playerName });
+
+				// Construct URL for fetching player data
+				const URLstring = `/player?${playerNameURL}`;
+				const response = await fetch(URLstring, {
+					method: "GET",
+					headers: {
+						"Content-type": "application/json; charset=UTF-8"
+					}
+				});
+				// Parse JSON response and populate the table with the data
+				const data = await response.json();
+				populateTable(data);
+			} catch (error) {
+				// Display an alert if there's an error fetching data
+				alert("Cannot get player data");
+			}
+		}
+
+		// Function to populate the table with player data
+		function populateTable(results) {
+			const table = document.getElementById("table");
+			results.forEach(element => {
+				const player = table.insertRow(-1);
+				const player_id = player.insertCell(0);
+				const name = player.insertCell(1);
+				const hand = player.insertCell(2);
+				const height = player.insertCell(3);
+				const ioc = player.insertCell(4);
+
+				// Fill in the table cells with player data
+				player_id.textContent = element.player_id;
+				name.textContent = element.player_name;
+				hand.textContent = element.player_hand;
+				height.textContent = element.player_height;
+				ioc.textContent = element.player_ioc;
+			});
+		}
+	</script>
+
+</body>
+
+</html>
