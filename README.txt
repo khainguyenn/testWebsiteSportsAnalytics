@@ -34,3 +34,4 @@ This project provides a full-stack dynamic website that allows users to view sta
 ### Database:
 - MySQL
 - SQL
+
